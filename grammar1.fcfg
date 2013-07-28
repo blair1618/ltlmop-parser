@@ -60,18 +60,20 @@ IC[SEM=<?lc(?ic1,?ic2)>] -> IC[SEM=?ic1] LC[SEM=?lc] IC[SEM=?ic2]
 #Valid noun phrases are limited to identifiers of the robot
 NP -> ROB
 
-#Valid verb phrases consist of either a linking verb (LV) and a predicative expression (PE)
-# or two VPs conjoined by a logical connective
+#Valid verb phrases consist of either a linking verb (LV) and a predicative expression (PE), 
+# a transitive verb (of either 'sense' or 'activate') and a corresponding proposition, or 
+# two VPs conjoined by a logical connective.
 VP[SEM=<Next(?pe)>] -> LV[TEN=pres] PE[SEM=?pe]
 VP[SEM=?pe] -> LV[TEN=past] PE[SEM=?pe]
-#VP[SEM=?n] -> TV N[SEM=?n] #For 'activated' and 'sensed'
+VP[SEM=<Next(?p)>] -> SENSE[TEN=pres] PHI_ENV[SEM=?p] | ACTIVATE[TEN=pres] PHI_ACT[SEM=?p]
+VP[SEM=?p] -> SENSE[TEN=past] PHI_ENV[SEM=?p] | ACTIVATE[TEN=past] PHI_ACT[SEM=?p]
 VP[SEM=<?lc(?vp1,?vp2)>] -> VP[SEM=?vp1] LC[SEM=?lc] VP[SEM=?vp2]
 
 #Valid predicative expressions are: a preposition (P) and region, a participle (of either
 # 'sense' or 'activate') and a corresponding proposition, a negation (NEG) and a PE, 
 # or two PEs conjoined by a logical connective
-PE[SEM=?r] -> P REGION[SEM=?r]
-PE[SEM=?p] -> SEN PHI_ENV[SEM=?p] | ACT PHI_ACT[SEM=?p]
+PE[SEM=?r] -> P PHI_REG[SEM=?r]
+PE[SEM=?p] -> SENSING PHI_ENV[SEM=?p] | ACTIVATING PHI_ACT[SEM=?p]
 PE[SEM=<?n(?p)>] -> NEG[SEM=?n] PE[TEN=?t,SEM=?p]
 PE[SEM=<?lc(?p1,?p2)>] -> PE[SEM=?p1] LC[SEM=?lc] PE[SEM=?p2]
 
@@ -80,8 +82,6 @@ MEMORY[SEM=<$Mem(?a,?s,?r)>] -> AUXPROP[SEM=?a] SETON PHI[SEM=?s] RESETON PHI[SE
 
 #Toggle proposition
 MEMORY[SEM=<$Tog(?a,?t)>] -> AUXPROP[SEM=?a] TOGGLEON PHI[SEM=?t]
-
-#TODO: Non-projective locative propositions
 
 #Propositions
 #############
@@ -127,9 +127,9 @@ STARTIN[SEM=<\x.x>] -> 'starts' 'in' | 'start' 'in'
 WITH[SEM=<\x.x>] -> 'with'
 TRUE[SEM=<true>] -> 'true'
 FALSE[SEM=<false>] -> 'false'
-ALWAYS[SEM=<\x.globally(x)>] -> 'always' | 'always' 'do' | 'do'
-INFDO[SEM=<\x.globallyFin(x)>] -> 'go' 'to' | 'visit' | 'infinitely' 'often' 'do' | 'infinitely' 'often'
-GOTO[SEM=<\x.globallyFin(x)>] -> 'go' 'to'
+ALWAYS[SEM=<\x.Glob(x)>] -> 'always' | 'always' 'do' | 'do'
+INFDO[SEM=<\x.GlobFin(x)>] -> 'go' 'to' | 'visit' | 'infinitely' 'often' 'do' | 'infinitely' 'often'
+GOTO[SEM=<\x.GlobFin(x)>] -> 'go' 'to'
 ANDSTAY[SEM=<$stay>] -> 'and' 'stay' | 'and' 'stay' 'there'
 IF[SEM=<\x.x>] -> 'if'
 IFF[SEM=<\x.x>] -> 'if' 'and' 'only' 'if' | 'iff'
@@ -143,8 +143,12 @@ TOGGLEON[SEM=<\x.x>] -> 'is' 'toggled' 'on'
 LV[TEN=pres] -> 'is' | 'are'
 LV[TEN=past] -> 'was' | 'were'
 P[SEM=<\x.x>] -> 'in'
-SEN[SEM=<\x.x>] -> 'sensing'
-ACT[SEM=<\x.x>] -> 'activating'
+SENSING[SEM=<\x.x>] -> 'sensing'
+ACTIVATING[SEM=<\x.x>] -> 'activating'
+SENSE[TEN=pres] -> 'sense'
+SENSE[TEN=past] -> 'sensed'
+ACTIVATE[TEN=pres] -> 'activate'
+ACTIVATE[TEN=past] -> 'activated'
 #Specification-determined lexicon added below:
 ##############################################
 

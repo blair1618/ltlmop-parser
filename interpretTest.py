@@ -4,8 +4,8 @@ import nltk
 import re
 
 #sent =['always not room1 and room2'] #ambiguous safety
-sent = ['if you are not in room1 and activating dig then go to room2'] #conditional
-#sent = ['if you are not in room1 or room2 then go to room2']
+sent = ['if you are not in room1 and activated dig then go to room2'] #conditional
+#sent = ['if you are not in room1 or in room2 then go to room2']
 #sent = ['go to room1 and room2'] #ambiguous liveness
 #sent = ['go to room1 and stay']
 #sent = ['group myGroup is room1, room2','if you are in any myGroup then do dig'] #region groups with 'any'
