@@ -94,6 +94,7 @@ PHI[SEM=?p] -> PHI_ENV[SEM=?p] | PHI_ROB[SEM=?p] | FALSE[SEM=?p]
 PHI_ENV[SEM=?ph] -> SENSOR[SEM=?ph]
 PHI_ENV[SEM=<?ng(?ph)>] -> NEG[SEM=?ng] PHI_ENV[SEM=?ph]
 PHI_ENV[SEM=<?lc(?p1,?p2)>] -> PHI_ENV[SEM=?p1] LC[SEM=?lc] PHI_ENV[SEM=?p2]
+PHI_ENV[SEM=<?a(?g)>] -> ANY[SEM=?a] SENSORGROUP[SEM=?g] | ALL[SEM=?a] SENSORGROUP[SEM=?g]
 
 # Region propositions, composed of valid region names or quantified groups
 PHI_REG[SEM=?ph] -> REGION[SEM=?ph]

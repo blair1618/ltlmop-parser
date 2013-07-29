@@ -17,7 +17,8 @@ regions = ['room1','room2','room3']
 actions = ['dig','beep']
 sensors = ['door1','door2']
 auxProps = ['mem1', 'mem2']
-groups = {}
+regionGroups = {}
+sensorGroups = {}
 
 spec = []
 
@@ -49,20 +50,40 @@ def main():
     groupDefPattern += '),? ?)+'
     r_groupDef = re.compile(groupDefPattern)
     
+    #Generate regular expression to match sentences defining sensor groups
+    #Resultant expression is: 'group (\w+) is (?:(region1),? ?|(region2),? ?|(region3),? ?)+'
+    sensorGroupDefPattern = ' sensor group (\w+) is (?:('
+    sensorGroupDefPattern += '),? ?|('.join(sensors)
+    sensorGroupDefPattern += '),? ?)+'
+    r_sensorGroupDef = re.compile(sensorGroupDefPattern)
+    
     #Generate NLTK feature grammar object from grammar string
     grammar = nltk.grammar.parse_fcfg(grammarText)
     
     for inputString in sent:
         print inputString
-        #Examine input to find any group definitons
+        #Examine input to find any region group definitons
         m_groupDef = r_groupDef.match(inputString)
         if m_groupDef:
             #Add semantics of group to our grammar string
             groupName = m_groupDef.groups()[0]
             grammarText += '\nGROUP[SEM=<' + groupName + '>] -> \'' + groupName + '\''
-            #Add specified regions to our dictionary of groups
-            groups[groupName] = filter(lambda x: x != None, m_groupDef.groups()[1:])
-            print 'Groups updated: ' + str(groups)
+            #Add specified regions to our dictionary of region groups
+            regionGroups[groupName] = filter(lambda x: x != None, m_groupDef.groups()[1:])
+            print 'Groups updated: ' + str(regionGroups)
+            #Re-compile grammar
+            grammar = nltk.grammar.parse_fcfg(grammarText)
+            continue
+        
+        #Examine input to find any sensor group definitions
+        m_sensorGroupDef = r_sensorGroupDef.match(inputString)
+        if m_sensorGroupDef:
+            #Add semantics of group to our grammar string
+            groupName = m_sensorGroupDef.groups()[0]
+            grammarText += '\nSENSORGROUP[SEM=<' + groupName + '>] -> \'' + groupName + '\''
+            #Add specified sensors to out dictionary of sensor groups
+            sensorGroups[groupName] = filter(lambda x: x != None, m_sensorGroupDef.groups()[1:])
+            print 'Sensor groups updated: ' + str(sensorGroups)
             #Re-compile grammar
             grammar = nltk.grammar.parse_fcfg(grammarText)
             continue
@@ -117,7 +138,7 @@ def parseGroupAll(semstring, syntree):
         return semstring
     else:
         groupName = re.search('\$All\((\w+)\)',semstring).groups()[0]
-        return appendAllClause(semstring, 0, groups[groupName])
+        return appendAllClause(semstring, 0, regionGroups[groupName])
     
 def parseGroupAny(semstring, syntree):
     def appendAnyClause(ind, groupRegions):
@@ -127,7 +148,7 @@ def parseGroupAny(semstring, syntree):
             return 'Or('+groupRegions[ind]+','+appendAnyClause(ind+1, groupRegions)+')'
     if semstring.find('$Any') != -1:
         groupName = re.search('\$Any\((\w+)\)',semstring).groups()[0]
-        groupRegions = groups[groupName]
+        groupRegions = regionGroups[groupName]
         anyClause = appendAnyClause(0, groupRegions)
         return re.sub('\$Any\('+groupName+'\)', anyClause, semstring)
     else:
