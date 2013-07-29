@@ -4,6 +4,8 @@
 #Grammar Rules
 ##############
 
+#TODO: Allow parentheses for explicit grouping in almost all rules
+
 #Sentence Forms
 ###############
 
@@ -54,20 +56,20 @@ REQUIREMENT[SPEC=?sp,SEM=?req,PROP=?p] -> SAFETY[SPEC=?sp,SEM=?req,PROP=?p] | LI
 
 #Conditions are independent clauses (IC) made up of either a noun phrase (NP) and verb phrase (VP)
 # or two ICs conjoined by a logical connective
-IC[SEM=?vp] -> NP VP[SEM=?vp]
+IC[SEM=?vp] -> NP[PER=?per] VP[PER=?per,SEM=?vp]
 IC[SEM=<?lc(?ic1,?ic2)>] -> IC[SEM=?ic1] LC[SEM=?lc] IC[SEM=?ic2]
 
 #Valid noun phrases are limited to identifiers of the robot
-NP -> ROB
+NP[PER=?per] -> ROB[PER=?per]
 
 #Valid verb phrases consist of either a linking verb (LV) and a predicative expression (PE), 
 # a transitive verb (of either 'sense' or 'activate') and a corresponding proposition, or 
 # two VPs conjoined by a logical connective.
-VP[SEM=<Next(?pe)>] -> LV[TEN=pres] PE[SEM=?pe]
-VP[SEM=?pe] -> LV[TEN=past] PE[SEM=?pe]
-VP[SEM=<Next(?p)>] -> SENSE[TEN=pres] PHI_ENV[SEM=?p] | ACTIVATE[TEN=pres] PHI_ACT[SEM=?p]
-VP[SEM=?p] -> SENSE[TEN=past] PHI_ENV[SEM=?p] | ACTIVATE[TEN=past] PHI_ACT[SEM=?p]
-VP[SEM=<?lc(?vp1,?vp2)>] -> VP[SEM=?vp1] LC[SEM=?lc] VP[SEM=?vp2]
+VP[PER=?per,SEM=<Next(?pe)>] -> LV[PER=?per,TEN=pres] PE[SEM=?pe]
+VP[PER=?per,SEM=?pe] -> LV[PER=?per,TEN=past] PE[SEM=?pe]
+VP[PER=?per,SEM=<Next(?p)>] -> SENSE[TEN=pres,PER=?per] PHI_ENV[SEM=?p] | ACTIVATE[TEN=pres,PER=?per] PHI_ACT[SEM=?p]
+VP[PER=?per,SEM=?p] -> SENSE[TEN=past,PER=?per] PHI_ENV[SEM=?p] | ACTIVATE[TEN=past,PER=?per] PHI_ACT[SEM=?p]
+VP[PER=?per,SEM=<?lc(?vp1,?vp2)>] -> VP[PER=?per,SEM=?vp1] LC[SEM=?lc] VP[PER=?per,SEM=?vp2]
 
 #Valid predicative expressions are: a preposition (P) and region, a participle (of either
 # 'sense' or 'activate') and a corresponding proposition, a negation (NEG) and a PE, 
@@ -121,7 +123,8 @@ NEG[SEM=<\x.Not(x)>] -> 'not'
 LC[SEM=<\x y.Or(x,y)>] -> 'or'
 LC[SEM=<\x y.And(x,y)>] -> 'and'
 ENV[SEM=<\x.x>] -> 'environment' | 'env'
-ROB[SEM=<\x.x>] -> 'robot' | 'you' | 'the' 'robot'
+ROB[PER=third] -> 'robot' | 'the' 'robot'
+ROB[PER=second] -> 'you'
 STARTWITH[SEM=<\x.x>] -> 'starts' 'with' | 'start' 'with'
 STARTIN[SEM=<\x.x>] -> 'starts' 'in' | 'start' 'in'
 WITH[SEM=<\x.x>] -> 'with'
@@ -140,15 +143,22 @@ ALL[SEM=<\x.$All(x)>] -> 'all'
 SETON[SEM=<\x.x>] -> 'is' 'set' 'on'
 RESETON[SEM=<\x.x>] -> 'and' 'reset' 'on'
 TOGGLEON[SEM=<\x.x>] -> 'is' 'toggled' 'on'
-LV[TEN=pres] -> 'is' | 'are'
-LV[TEN=past] -> 'was' | 'were'
+LV[TEN=pres,PER=third] -> 'is'
+LV[TEN=pres,PER=second] -> 'are'
+LV[TEN=past,PER=third] -> 'was'
+LV[TEN=past,PER=second] -> 'were'
 P[SEM=<\x.x>] -> 'in'
 SENSING[SEM=<\x.x>] -> 'sensing'
 ACTIVATING[SEM=<\x.x>] -> 'activating'
-SENSE[TEN=pres] -> 'sense'
-SENSE[TEN=past] -> 'sensed'
-ACTIVATE[TEN=pres] -> 'activate'
-ACTIVATE[TEN=past] -> 'activated'
+SENSE[TEN=pres,PER=second] -> 'sense'
+SENSE[TEN=pres,PER=third] -> 'senses'
+SENSE[TEN=past,PER=second] -> 'sensed'
+SENSE[TEN=past,PER=third] -> 'sensed'
+ACTIVATE[TEN=pres,PER=second] -> 'activate'
+ACTIVATE[TEN=pres,PER=third] -> 'activates'
+ACTIVATE[TEN=past,PER=second] -> 'activated'
+ACTIVATE[TEN=past,PER=third] -> 'activated'
+
 #Specification-determined lexicon added below:
 ##############################################
 
