@@ -4,11 +4,11 @@ import nltk
 import re
 
 #sent =['always not room1 and room2'] #ambiguous safety
-sent = ['if you are not in room1 and activated dig then go to room2'] #conditional
+#sent = ['if you are not in room1 and activating dig then go to room2'] #conditional
 #sent = ['if you are not in room1 or in room2 then go to room2']
 #sent = ['go to room1 and room2'] #ambiguous liveness
 #sent = ['go to room1 and stay']
-#sent = ['group myGroup is room1, room2','if you are in any myGroup then do dig'] #region groups with 'any'
+sent = ['group myGroup is room1, room2','if you are in any myGroup then do dig'] #region groups with 'any'
 #sent = ['group myGroup is room1, room2','go to all myGroup'] #region groups with 'all'
 #sent = ['mem1 is set on room2 and reset on beep'] #memory proposition
 #sent = ['mem1 is toggled on beep'] #memory toggle
@@ -44,11 +44,9 @@ def main():
     
     #Generate regular expression to match sentences defining region groups
     #Resultant expression is: 'group (\w+) is (?:(region1),? ?|(region2),? ?|(region3),? ?)+'
-    groupDefPattern = 'group (\w+) is (?:'
-    for region in regions:
-        groupDefPattern += '(' + region + '),? ?|'
-    groupDefPattern = groupDefPattern[0:-1]
-    groupDefPattern += ')+'
+    groupDefPattern = 'group (\w+) is (?:('
+    groupDefPattern += '),? ?|('.join(regions)
+    groupDefPattern += '),? ?)+'
     r_groupDef = re.compile(groupDefPattern)
     
     #Generate NLTK feature grammar object from grammar string
