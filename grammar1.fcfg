@@ -80,10 +80,10 @@ PE[SEM=<?n(?p)>] -> NEG[SEM=?n] PE[TEN=?t,SEM=?p]
 PE[SEM=<?lc(?p1,?p2)>] -> PE[SEM=?p1] LC[SEM=?lc] PE[SEM=?p2]
 
 # Memory proposition
-MEMORY[SEM=<$Mem(?a,?s,?r)>] -> AUXPROP[SEM=?a] SETON PHI[SEM=?s] RESETON PHI[SEM=?r]
+MEMORY[SEM=<$Mem(?p,?s,?r)>] -> PHI_ROB[SEM=?p] SETON PHI[SEM=?s] RESETON PHI[SEM=?r]
 
 # Toggle proposition
-MEMORY[SEM=<$Tog(?a,?t)>] -> AUXPROP[SEM=?a] TOGGLEON PHI[SEM=?t]
+MEMORY[SEM=<$Tog(?p,?t)>] -> PHI_ROB[SEM=?p] TOGGLEON PHI[SEM=?t]
 
 # Propositions
 ##############
@@ -109,6 +109,7 @@ PHI_ACT[SEM=<?lc(?p1,?p2)>] -> PHI_ACT[SEM=?p1] LC[SEM=?lc] PHI_ACT[SEM=?p2]
 # Robot propositions, composed of any valid proposition except sensor propositions 
 PHI_ROB[SEM=?ph] -> REGION[SEM=?ph]
 PHI_ROB[SEM=?ph] -> ACTION[SEM=?ph]
+PHI_ROB[SEM=?ph] -> AUXPROP[SEM=?ph]
 PHI_ROB[SEM=<?ng(?ph)>] -> NEG[SEM=?ng] PHI_ROB[SEM=?ph]
 PHI_ROB[SEM=<?lc(?p1,?p2)>] -> PHI_ROB[SEM=?p1] LC[SEM=?lc] PHI_ROB[SEM=?p2]
 
